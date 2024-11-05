@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: otrs
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    shm_size: '20g'
+    command:
+      - "-c"
+      - "effective_cache_size=10GB"
+      - "-c"
+      - "shared_buffers=5GB"
+      - "-c"
+      - "work_mem=512MB"
+      - "-c"
+      - "max_parallel_workers_per_gather=4"
+    restart: always
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: otrs_app
+    stdin_open: true
+    tty: true
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      PYTHONUNBUFFERED: '1'
+    depends_on:
+      - db
+

@@ -1,15 +1,13 @@
-from sentence_transformers import SentenceTransformer
 from pgvector.psycopg import register_vector
 import sys
-from connect import get_pg_connection
+from lib.connect import get_pg_connection
+from lib.embedding_model import EmbeddingModel
 
 
 def get_relevant_tickets(query):
 
-    embedding_model = SentenceTransformer(
-        "paraphrase-MiniLM-L3-v2", device="cuda"
-    )
-    query_embedding = embedding_model.encode(query)
+    model = EmbeddingModel()
+    query_embedding = model.encode(query)
 
     with get_pg_connection() as connection:
         register_vector(connection)

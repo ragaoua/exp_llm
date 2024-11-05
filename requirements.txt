@@ -2,9 +2,3 @@ psycopg
 sentence-transformers
 accelerate
 pgvector
-
-flash-attn
-packaging
-torch
-ninja
-numba

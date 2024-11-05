@@ -1,5 +1,5 @@
 from pgvector.psycopg import register_vector
-from connect import get_pg_connection
+from lib.connect import get_pg_connection
 import sys
 
 
@@ -9,7 +9,7 @@ def get_relevant_tickets(ticket_number: int):
         register_vector(connection)
         with connection.cursor() as cursor:
             cursor.execute("""
-                SELECT nn.tn, nc.conversation
+                SELECT nn.tn, nc.conversation, nn.id
                 FROM ticket_conversation_embeddings t
                 JOIN ticket tt ON tt.id = t.ticket_id
                 JOIN ticket_conversation_embeddings n ON t.ticket_id <> n.ticket_id

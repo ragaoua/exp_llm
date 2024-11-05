@@ -4,7 +4,7 @@ from contextlib import contextmanager
 
 @contextmanager
 def get_pg_connection():
-    host = "localhost"
+    host = "db"
     port = "5432"
     dbname = "otrs"
     dbrole = "postgres"

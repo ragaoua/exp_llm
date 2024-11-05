@@ -1,10 +1,10 @@
 from time import time  # For debugging purposes
-from sentence_transformers import SentenceTransformer
-from connect import get_pg_connection
+from lib.embedding_model import EmbeddingModel
+from lib.connect import get_pg_connection
 
 DEBUG = True
 
-model = SentenceTransformer("paraphrase-MiniLM-L3-v2", device="cuda")
+model = EmbeddingModel()
 
 # The first connection will be used to query the data
 # The second will be used to insert the embeddings
