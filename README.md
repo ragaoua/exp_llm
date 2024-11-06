@@ -1,15 +1,15 @@
 # Setup
 
-
-## On Linux - Install the nvidia drivers
+## Linux setup with an nvidia GPU
+### Install the nvidia drivers
 
 ~~~
 https://www.tecmint.com/install-nvidia-drivers-in-linux/#Method_1_Installing_NVIDIA_Drivers_Using_RPM_Fusion_in_Fedora
 ~~~
-=> also installed the NVIDIA VAAPI/VDPAU Driver (see end of article)
+=> also install the NVIDIA VAAPI/VDPAU Driver (see end of article)
 
 
-## On Linux - Install cuda
+### Install cuda
 
 Cf https://rpmfusion.org/Howto/CUDA#Installation
 
@@ -20,31 +20,57 @@ sudo dnf -y install cuda
 ~~~
 
 
-## Start the app and db containers
+## Setup the database and python environment
+
+Start the db and python environment containers :
 
 ~~~bash
 mkdir pgdata
 podman-compose up -d
 ~~~
 
-## Import the otrs database
+Optionally, only run the database container and create a python venv.
+The venv is useful for executing the python scripts on your machine
+directly instead of a container, which makes it easier to take
+advantage of the hardware (e.g, Silicon chips as 'mps') :
+
+~~~bash
+mkdir pgdata
+podman-compose up db -d
+python -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+~~~
+
+Keep in mind that, if you choose to go with a container for the python environment,
+every execution of the python script from now on should be done inside said container (named
+"otrs_app"). If you choose to go with the venv, the script should be executed through that venv.
+
+So either this :
+
+~~~bash
+source venv/bin/activate
+python <script> <options...>
+~~~
+
+Or this :
+
+~~~bash
+podman exec -it otrs_app python <script> <options...>
+~~~
+
+Also, if running the scripts though the venv, you'll need to change the "host" variable
+inside the function "get_pg_connection" ("lib/connect.py") from "db" to "localhost".
+
+Next, import the otrs database and prepare the schema :
 
 ~~~bash
 psql -h localhost -U postgres -f <dump>
+./prepare.sh
 ~~~
 
-## Prepare the database
-
-~~~bash
-bash prepare.sh
-~~~
-
-
-## Generate the vector embeddings
-
-NB : the "generate_embeddings.py" script can load the embedding model
-     into a MacOs M2 chip but that's commented since we're using
-     containers
+Generate the vector embeddings :
 
 ~~~bash
 podman exec -it otrs_app python generate_embeddings.py
