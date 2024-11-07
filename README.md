@@ -62,6 +62,8 @@ podman exec -it otrs_app python <script> <options...>
 
 Also, if running the scripts though the venv, you'll need to change the "host" variable
 inside the function "get_pg_connection" ("lib/connect.py") from "db" to "localhost".
+Whatever method you choose, "localhost" works on Linux but not on Unix systems (MacOS),
+due to limitations with the network stack caused by the podman virtual machine.
 
 Next, import the otrs database and prepare the schema :
 
