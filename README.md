@@ -20,6 +20,13 @@ sudo dnf -y install cuda
 ~~~
 
 
+## Install podman-compose
+
+~~~bash
+sudo dnf install -y podman-compose
+~~~
+
+
 ## Setup the database and python environment
 
 Start the db and python environment containers :
