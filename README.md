@@ -1,13 +1,12 @@
 # Setup
 
 ## Linux setup with an nvidia GPU
-### Install the nvidia drivers
+### OPTION 1 : install the nvidia drivers locally
 
 ~~~
 https://www.tecmint.com/install-nvidia-drivers-in-linux/#Method_1_Installing_NVIDIA_Drivers_Using_RPM_Fusion_in_Fedora
 ~~~
 => also install the NVIDIA VAAPI/VDPAU Driver (see end of article)
-
 
 ### Install cuda
 
@@ -17,6 +16,17 @@ Cf https://rpmfusion.org/Howto/CUDA#Installation
 sudo dnf config-manager --add-repo https://developer.download.nvidia.com/compute/cuda/repos/fedora39/x86_64/cuda-fedora39.repo
 sudo dnf clean all
 sudo dnf -y install cuda
+~~~
+
+### OPTION 2 : install the nvidia drivers for containers
+
+Cf https://hub.docker.com/r/ollama/ollama
+Cf https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installation
+Cf https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/cdi-support.html
+
+~~~bash
+sudo dnf install -y nvidia-container-toolkit
+sudo nvidia-ctk cdi generate --output=/etc/cdi/nvidia.yaml
 ~~~
 
 
