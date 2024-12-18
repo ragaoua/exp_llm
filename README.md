@@ -68,7 +68,7 @@ Generate the vector embeddings :
 # Search the top n most relevant tickets to a ticket
 
 ~~~bash
-./02_get_relevant_tickets.sh <ticket_number> [-n|--limit <limit>] <-p|--print-conversation>
+./query_ticket.sh <ticket_number> [-n|--limit <limit>] <-p|--print-conversation>
 ~~~
 
 
