@@ -35,18 +35,3 @@ services:
     restart: always
     depends_on:
       - ollama
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: otrs_app
-    stdin_open: true
-    tty: true
-    working_dir: /app
-    volumes:
-      - .:/app
-    environment:
-      PYTHONUNBUFFERED: '1'
-    depends_on:
-      - db
-

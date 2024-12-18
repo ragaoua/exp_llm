@@ -37,69 +37,38 @@ sudo dnf install -y podman-compose
 ~~~
 
 
-## Setup the database and python environment
+## Setup the database and ollama containers
 
-Start the db and python environment containers :
+Start the containers :
 
 ~~~bash
 mkdir pgdata
 podman-compose up -d
 ~~~
 
-Optionally, only run the database container and create a python venv.
-The venv is useful for executing the python scripts on your machine
-directly instead of a container, which makes it easier to take
-advantage of the hardware (e.g, Silicon chips as 'mps') :
-
-~~~bash
-mkdir pgdata
-podman-compose up db -d
-python -m venv venv
-source venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-~~~
-
-Keep in mind that, if you choose to go with a container for the python environment,
-every execution of the python script from now on should be done inside said container (named
-"otrs_app"). If you choose to go with the venv, the script should be executed through that venv.
-
-So either this :
-
-~~~bash
-source venv/bin/activate
-python <script> <options...>
-~~~
-
-Or this :
-
-~~~bash
-podman exec -it otrs_app python <script> <options...>
-~~~
-
-Also, if running the scripts though the venv, you'll need to change the "host" variable
-inside the function "get_pg_connection" ("lib/connect.py") from "db" to "localhost".
-Whatever method you choose, "localhost" works on Linux but not on Unix systems (MacOS),
-due to limitations with the network stack caused by the podman virtual machine.
-
 Next, import the otrs database and prepare the schema :
 
 ~~~bash
 psql -h localhost -U postgres -f <dump>
-./prepare.sh
+./00_prepare.sh
 ~~~
 
 Generate the vector embeddings :
-
 ~~~bash
-podman exec -it otrs_app python generate_embeddings.py
+./01_generate_embeddings.sh
 ~~~
 
 
-# Search the top 5 most relevant tickets to a ticket
+
+
+
+
+
+
+# Search the top n most relevant tickets to a ticket
 
 ~~~bash
-podman exec -it otrs_app python get_relevant_tickets.py <ticket_number> [DEBUG]
+./02_get_relevant_tickets.sh <ticket_number> [-n|--limit <limit>] <-p|--print-conversation>
 ~~~
 
 
