@@ -77,11 +77,3 @@ Generate the vector embeddings :
 
 Work in progress...
 
-~~~bash
-PYTORCH_ENABLE_MPS_FALLBACK=1 python rag.py <my_query>
-~~~
-
-
-
-~~~bash
-~~~
