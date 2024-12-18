@@ -10,8 +10,6 @@ readonly db="otrs"
 readonly role="postgres"
 readonly psql="psql -h localhost -U "$role" -d "$db""
 
-curl -s https://raw.githubusercontent.com/pramsey/pgsql-openai/main/openai--1.0.sql | ${psql[@]}
-
 readonly vector_size=384
 
 ${psql[@]} << EOF
@@ -33,7 +31,11 @@ CREATE MATERIALIZED VIEW ticket_conversations AS
 ;
 
 CREATE EXTENSION http;
+EOF
 
+curl -s https://raw.githubusercontent.com/pramsey/pgsql-openai/main/openai--1.0.sql | ${psql[@]}
+
+${psql[@]} << EOF
 ALTER DATABASE $db SET openai.api_uri = 'http://otrs_ollama:11434/v1/';
 ALTER DATABASE $db SET openai.api_key = 'none';
 ALTER DATABASE $db SET openai.prompt_model = '$prompt_model';
