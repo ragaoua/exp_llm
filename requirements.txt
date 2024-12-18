@@ -1,4 +1,0 @@
-psycopg
-sentence-transformers
-accelerate
-pgvector
