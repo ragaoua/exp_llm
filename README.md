@@ -59,12 +59,6 @@ Generate the vector embeddings :
 ~~~
 
 
-
-
-
-
-
-
 # Search the top n most relevant tickets to a ticket
 
 ~~~bash
@@ -72,10 +66,10 @@ Generate the vector embeddings :
 ~~~
 
 
-# Search the top 5 mort relevant tickets relative to a query
+# Search the top n most relevant tickets relative to a query
 
 ~~~bash
-podman exec -it otrs_app python query.py <my_query> [DEBUG]
+./query_ticket.sh <your_request> [-n|--limit <limit>] <-p|--print-conversation>
 ~~~
 
 
