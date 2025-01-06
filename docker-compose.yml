@@ -8,6 +8,8 @@ services:
     tty: true
     devices:
       - "nvidia.com/gpu=all"
+    volumes:
+      - ./ollama_data:/root/.ollama
     privileged: true
     ports:
       - 11434:11434
