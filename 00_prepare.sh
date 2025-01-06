@@ -1,6 +1,6 @@
 #!/bin/bash
 
-readonly embedding_model="nextfire/paraphrase-multilingual-minilm"
+readonly embedding_model="nomic-embed-text"
 readonly prompt_model="phi3"
 
 podman exec -it otrs_ollama ollama pull "$embedding_model"
@@ -13,14 +13,14 @@ readonly psql="psql -h localhost -U "$role" -d "$db""
 readonly vector_size=384
 
 ${psql[@]} << EOF
-CREATE EXTENSION vector;
+CREATE EXTENSION IF NOT EXISTS vector;
 
-CREATE TABLE ticket_conversation_embeddings(
+CREATE TABLE IF NOT EXISTS ticket_conversation_embeddings(
         ticket_id bigint PRIMARY KEY REFERENCES ticket(id),
 	embedding VECTOR($vector_size)
 );
 
-CREATE MATERIALIZED VIEW ticket_conversations AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS ticket_conversations AS
         SELECT t.id, string_agg(d.a_body, '\n' ORDER BY d.incoming_time) as conversation
         FROM ticket t
         JOIN article a ON a.ticket_id = t.id
@@ -30,7 +30,7 @@ CREATE MATERIALIZED VIEW ticket_conversations AS
         GROUP BY t.id
 ;
 
-CREATE EXTENSION http;
+CREATE EXTENSION IF NOT EXISTS http;
 EOF
 
 curl -s https://raw.githubusercontent.com/pramsey/pgsql-openai/main/openai--1.0.sql | ${psql[@]}
