@@ -40,4 +40,26 @@ ALTER DATABASE $db SET openai.api_uri = 'http://otrs_ollama:11434/v1/';
 ALTER DATABASE $db SET openai.api_key = 'none';
 ALTER DATABASE $db SET openai.prompt_model = '$prompt_model';
 ALTER DATABASE $db SET openai.embedding_model = '$embedding_model';
+
+CREATE OR REPLACE FUNCTION generate_response(query TEXT)
+    RETURNS TEXT
+    LANGUAGE 'plpgsql' AS $$
+DECLARE
+    query_embedding VECTOR;
+    context_chunks TEXT;
+BEGIN
+    query_embedding := openai.vector(query)::VECTOR;
+
+
+    SELECT 'Ticket N°' || t.tn || ' :\n' || c.conversation INTO context_chunks
+    FROM ticket_conversation_embeddings e
+    JOIN ticket_conversations c ON e.ticket_id = c.id
+    JOIN ticket t ON t.id = e.ticket_id
+    ORDER BY e.embedding <=> query_embedding
+    LIMIT 5;
+
+    RETURN openai.prompt('Tu es un expert PostgreSQL. Répond à la requête en te basant sur les tickets ci-dessous :' || '\n' || context_chunks, query);
+END;
+$$;
+
 EOF
