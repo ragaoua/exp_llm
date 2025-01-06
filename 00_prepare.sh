@@ -10,7 +10,7 @@ readonly db="otrs"
 readonly role="postgres"
 readonly psql="psql -h localhost -U "$role" -d "$db""
 
-readonly vector_size=384
+readonly vector_size=768
 
 ${psql[@]} << EOF
 CREATE EXTENSION IF NOT EXISTS vector;
