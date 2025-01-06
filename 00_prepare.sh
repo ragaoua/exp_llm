@@ -43,7 +43,7 @@ ALTER DATABASE $db SET openai.embedding_model = '$embedding_model';
 
 CREATE OR REPLACE FUNCTION generate_response(query TEXT)
     RETURNS TEXT
-    LANGUAGE 'plpgsql' AS $$
+    LANGUAGE 'plpgsql' AS \$\$
 DECLARE
     query_embedding VECTOR;
     context_chunks TEXT;
@@ -60,6 +60,6 @@ BEGIN
 
     RETURN openai.prompt('Tu es un expert PostgreSQL. Répond à la requête en te basant sur les tickets ci-dessous :' || '\n' || context_chunks, query);
 END;
-$$;
+\$\$;
 
 EOF
