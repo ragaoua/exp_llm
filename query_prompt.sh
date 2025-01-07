@@ -47,15 +47,15 @@ readonly psql="psql -h localhost -U "$role" -d "$db" --tuples-only --no-align"
 ${psql[@]} --set prompt="$prompt" <<EOF
 SELECT openai.vector(:'prompt')::vector as prompt_embedding \gset
 
-SELECT t.tn $("$print_conversation" && echo ", c.conversation")
-FROM ticket_conversation_embeddings e
-JOIN ticket_conversations c ON e.ticket_id = c.id
-JOIN ticket t ON t.id = e.ticket_id
+SELECT t.tn $("$print_conversation" && echo ", tc.conversation")
+FROM ticket t
+JOIN ticket_embeddings te ON te.ticket_id = t.id
+JOIN ticket_conversations tc ON tc.id = te.ticket_id
 $(
 if "$first_article_only" ; then
-  echo "ORDER BY e.first_article_embedding <-> :'prompt_embedding'"
+  echo "ORDER BY te.first_article_embedding <-> :'prompt_embedding'"
 else
-  echo "ORDER BY e.ticket_embedding <-> :'prompt_embedding'"
+  echo "ORDER BY te.conversation_embedding <-> :'prompt_embedding'"
 fi
 )
 LIMIT $nb_tickets;

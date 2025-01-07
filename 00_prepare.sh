@@ -15,9 +15,9 @@ readonly vector_size=768
 ${psql[@]} << EOF
 CREATE EXTENSION IF NOT EXISTS vector;
 
-CREATE TABLE IF NOT EXISTS ticket_conversation_embeddings(
+CREATE TABLE IF NOT EXISTS ticket_embeddings(
     ticket_id bigint PRIMARY KEY REFERENCES ticket(id),
-	ticket_embedding VECTOR($vector_size),
+	conversation_embedding VECTOR($vector_size),
 	first_article_embedding VECTOR($vector_size)
 );
 
@@ -56,7 +56,7 @@ BEGIN
 
 
     SELECT 'Ticket N°' || t.tn || ' :\n' || c.conversation INTO context_chunks
-    FROM ticket_conversation_embeddings e
+    FROM ticket_embeddings e
     JOIN ticket_conversations c ON e.ticket_id = c.id
     JOIN ticket t ON t.id = e.ticket_id
     ORDER BY e.embedding <=> query_embedding
