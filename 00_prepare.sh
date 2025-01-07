@@ -17,17 +17,21 @@ CREATE EXTENSION IF NOT EXISTS vector;
 
 CREATE TABLE IF NOT EXISTS ticket_conversation_embeddings(
     ticket_id bigint PRIMARY KEY REFERENCES ticket(id),
-	embedding VECTOR($vector_size)
+	ticket_embedding VECTOR($vector_size),
+	first_article_embedding VECTOR($vector_size)
 );
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS ticket_conversations AS
-        SELECT t.id, string_agg(d.a_body, '\n' ORDER BY d.incoming_time) as conversation
+        SELECT DISTINCT ON (id)
+            t.id,
+            string_agg(d.a_body, '\n') OVER (PARTITION BY t.id ORDER BY d.incoming_time) AS conversation,
+            d.a_body as first_article
         FROM ticket t
         JOIN article a ON a.ticket_id = t.id
         JOIN article_data_mime d ON d.article_id = a.id
         WHERE article_sender_type_id <> 2 -- Ignorer les réponses automatiques
         AND t.queue_id = 116 -- PostgreSQl
-        GROUP BY t.id
+        ORDER BY t.id, d.incoming_time
 ;
 
 CREATE EXTENSION IF NOT EXISTS http;

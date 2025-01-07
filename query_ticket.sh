@@ -1,6 +1,9 @@
 #!/bin/bash
 
 print_conversation=false
+first_article_only=false
+nb_tickets=5
+
 while [[ $# -gt 0 ]]; do
   case $1 in
     -n|--limit)
@@ -10,6 +13,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     -p|--print-conversation)
       print_conversation=true
+      shift
+      ;;
+    -f|--first-article-only)
+      first_article_only=true
       shift
       ;;
     -*|--*)
@@ -31,8 +38,8 @@ if [ -z "$ticket_number" ] ; then
   echo "One positional argument expected" >&2
   exit 1
 fi
-[ -z "$nb_tickets" ] && nb_tickets=5
-readonly ticket_number nb_tickets print_conversation
+
+readonly ticket_number nb_tickets print_conversation first_article_only
 
 readonly db="otrs"
 readonly role="postgres"
@@ -46,6 +53,13 @@ JOIN ticket_conversation_embeddings n ON t.ticket_id <> n.ticket_id
 JOIN ticket_conversations nc ON n.ticket_id = nc.id
 JOIN ticket nn ON nn.id = n.ticket_id
 WHERE tt.tn = '$ticket_number'
-ORDER BY t.embedding <-> n.embedding
+$(
+if "$first_article_only" ; then
+  echo "ORDER BY t.first_article_embedding <-> n.first_article_embedding"
+else
+  echo "ORDER BY t.ticket_embedding <-> n.ticket_embedding"
+fi
+)
+
 LIMIT $nb_tickets;
 EOF
