@@ -39,6 +39,20 @@ sudo dnf install -y podman-compose
 
 ## Setup the database and ollama containers
 
+Define the PGDATA_HOST_DIR and OLLAMA_HOST_DIR variables.
+either use a .env file or export the variables directly.
+For instance :
+
+~~~bash
+cat >.env <<EOF
+PGDATA_HOST_DIR=/data/llm_plgrnd/pgdata
+OLLAMA_HOST_DIR=/data/llm_plgrnd/ollama_data
+EOF
+~~~
+
+**NB** : if not defined, the variables default to "pgdata"
+         and "ollama_data" in the current directory
+
 Start the containers :
 
 ~~~bash

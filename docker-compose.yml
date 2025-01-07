@@ -9,7 +9,7 @@ services:
     devices:
       - "nvidia.com/gpu=all"
     volumes:
-      - ./ollama_data:/root/.ollama
+      - ${OLLAMA_HOST_DIR:-./ollama_data}:/root/.ollama
     privileged: true
     ports:
       - 11434:11434
@@ -23,7 +23,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./pgdata:/var/lib/postgresql/data:Z
+      - ${PGDATA_HOST_DIR:-./pgdata}:/var/lib/postgresql/data:Z
     shm_size: '20g'
     command:
       - "-c"
