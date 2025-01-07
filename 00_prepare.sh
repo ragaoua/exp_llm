@@ -16,7 +16,7 @@ ${psql[@]} << EOF
 CREATE EXTENSION IF NOT EXISTS vector;
 
 CREATE TABLE IF NOT EXISTS ticket_conversation_embeddings(
-        ticket_id bigint PRIMARY KEY REFERENCES ticket(id),
+    ticket_id bigint PRIMARY KEY REFERENCES ticket(id),
 	embedding VECTOR($vector_size)
 );
 
