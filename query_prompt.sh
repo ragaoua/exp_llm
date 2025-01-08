@@ -1,7 +1,7 @@
 #!/bin/bash
 
-print_conversation=false
-first_article_only=false
+print_ticket=false
+consider_full_ticket=false
 nb_tickets=5
 
 while [[ $# -gt 0 ]]; do
@@ -11,12 +11,12 @@ while [[ $# -gt 0 ]]; do
       shift
       shift
       ;;
-    -p|--print-conversation)
-      print_conversation=true
+    -p|--print-ticket)
+      print_ticket=true
       shift
       ;;
-    -f|--first-article-only)
-      first_article_only=true
+    -f|--consider-full-ticket)
+      consider_full_ticket=true
       shift
       ;;
     -*|--*)
@@ -38,7 +38,7 @@ if [ -z "$prompt" ] ; then
   echo "One positional argument expected" >&2
   exit 1
 fi
-readonly prompt nb_tickets print_conversation first_article_only
+readonly prompt nb_tickets print_ticket consider_full_ticket
 
 readonly db="otrs"
 readonly role="postgres"
@@ -47,15 +47,15 @@ readonly psql="psql -h localhost -U "$role" -d "$db" --tuples-only --no-align"
 ${psql[@]} --set prompt="$prompt" <<EOF
 SELECT openai.vector(:'prompt')::vector as prompt_embedding \gset
 
-SELECT t.tn $("$print_conversation" && echo ", tc.conversation")
+SELECT t.tn $("$print_ticket" && echo ", tc.conversation")
 FROM ticket t
 JOIN ticket_embeddings te ON te.ticket_id = t.id
 JOIN ticket_conversations tc ON tc.id = te.ticket_id
 $(
-if "$first_article_only" ; then
-  echo "ORDER BY te.first_article_embedding <-> :'prompt_embedding'"
-else
+if "$consider_full_ticket" ; then
   echo "ORDER BY te.conversation_embedding <-> :'prompt_embedding'"
+else
+  echo "ORDER BY te.first_article_embedding <-> :'prompt_embedding'"
 fi
 )
 LIMIT $nb_tickets;
