@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS ticket_embeddings(
 CREATE MATERIALIZED VIEW IF NOT EXISTS ticket_conversations AS
         SELECT DISTINCT ON (id)
             t.id,
-            string_agg(d.a_body, '\n') OVER (PARTITION BY t.id ORDER BY d.incoming_time) AS conversation,
+            string_agg(d.a_body, E'\n') OVER (PARTITION BY t.id ORDER BY d.incoming_time) AS conversation,
             d.a_body as first_article
         FROM ticket t
         JOIN article a ON a.ticket_id = t.id
