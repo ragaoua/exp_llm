@@ -46,7 +46,7 @@ readonly role="postgres"
 readonly psql="psql -h localhost -U "$role" -d "$db" --tuples-only --no-align"
 
 ${psql[@]} <<EOF
-SELECT t2.id $("$print_ticket" && echo ", t2.tn, t2c.conversation")
+SELECT t2.id, t2.tn $("$print_ticket" && echo ", t2c.conversation")
 FROM ticket t1
 JOIN ticket_embeddings t1e ON t1e.ticket_id = t1.id
 JOIN ticket t2 ON t2.id <> t1.id

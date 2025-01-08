@@ -47,7 +47,7 @@ readonly psql="psql -h localhost -U "$role" -d "$db" --tuples-only --no-align"
 ${psql[@]} --set prompt="$prompt" <<EOF
 SELECT openai.vector(:'prompt')::vector as prompt_embedding \gset
 
-SELECT t.id $("$print_ticket" && echo ", t.tn, tc.conversation")
+SELECT t.id, t.tn $("$print_ticket" && echo ", tc.conversation")
 FROM ticket t
 JOIN ticket_embeddings te ON te.ticket_id = t.id
 JOIN ticket_conversations tc ON tc.id = te.ticket_id
