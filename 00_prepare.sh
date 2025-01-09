@@ -22,16 +22,22 @@ CREATE TABLE IF NOT EXISTS ticket_embeddings(
 );
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS ticket_conversations AS
-        SELECT DISTINCT ON (id)
-            t.id,
-            string_agg(d.a_body, E'\n') OVER (PARTITION BY t.id) AS conversation,
-            d.a_body as first_article
+    WITH postgresql_articles AS (
+        SELECT
+            t.id as ticket_id,
+            d.a_body as article
         FROM ticket t
         JOIN article a ON a.ticket_id = t.id
         JOIN article_data_mime d ON d.article_id = a.id
         WHERE article_sender_type_id <> 2 -- Ignorer les réponses automatiques
         AND t.queue_id = 116 -- PostgreSQl
         ORDER BY t.id, d.incoming_time
+    )
+    SELECT DISTINCT ON (ticket_id)
+        ticket_id as id,
+        string_agg(article, E'\n') OVER (PARTITION BY ticket_id) AS conversation,
+        article as first_article
+    FROM postgresql_articles
 ;
 
 CREATE EXTENSION IF NOT EXISTS http;
