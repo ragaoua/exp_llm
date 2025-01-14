@@ -15,13 +15,14 @@ readonly vector_size=768
 ${psql[@]} << EOF
 CREATE EXTENSION IF NOT EXISTS vector;
 
-CREATE TABLE IF NOT EXISTS ticket_embeddings(
+CREATE SCHEMA aide;
+CREATE TABLE IF NOT EXISTS aide.ticket_embeddings(
     ticket_id bigint PRIMARY KEY REFERENCES ticket(id),
 	conversation_embedding VECTOR($vector_size),
 	first_article_embedding VECTOR($vector_size)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS ticket_conversations AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS aide.ticket_conversations AS
     WITH postgresql_articles AS (
         SELECT
             t.id as ticket_id,
@@ -51,7 +52,7 @@ ALTER DATABASE $db SET openai.api_key = 'none';
 ALTER DATABASE $db SET openai.prompt_model = '$prompt_model';
 ALTER DATABASE $db SET openai.embedding_model = '$embedding_model';
 
-CREATE OR REPLACE FUNCTION generate_response(query TEXT)
+CREATE OR REPLACE FUNCTION aide.generate_response(query TEXT)
     RETURNS TEXT
     LANGUAGE 'plpgsql' AS \$\$
 DECLARE

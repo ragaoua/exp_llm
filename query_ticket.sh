@@ -46,6 +46,8 @@ readonly role="postgres"
 readonly psql="psql -h localhost -U "$role" -d "$db" --tuples-only --no-align"
 
 ${psql[@]} <<EOF
+SET search_path=aide,public;
+
 SELECT t2.id, t2.tn $("$print_ticket" && echo ", t2c.conversation")
 FROM ticket t1
 JOIN ticket_embeddings t1e ON t1e.ticket_id = t1.id

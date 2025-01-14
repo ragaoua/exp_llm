@@ -45,6 +45,8 @@ readonly role="postgres"
 readonly psql="psql -h localhost -U "$role" -d "$db" --tuples-only --no-align"
 
 ${psql[@]} --set prompt="$prompt" <<EOF
+SET search_path=aide,public;
+
 SELECT openai.vector(:'prompt')::vector as prompt_embedding \gset
 
 SELECT t.id, t.tn $("$print_ticket" && echo ", tc.conversation")
