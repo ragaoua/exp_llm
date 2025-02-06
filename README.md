@@ -45,8 +45,8 @@ For instance :
 
 ~~~bash
 cat >.env <<EOF
-PGDATA_HOST_DIR=/data/llm_plgrnd/pgdata
-OLLAMA_HOST_DIR=/data/llm_plgrnd/ollama_data
+PGDATA_HOST_DIR=/data/exp_llm/pgdata
+OLLAMA_HOST_DIR=/data/exp_llm/ollama_data
 EOF
 ~~~
 
