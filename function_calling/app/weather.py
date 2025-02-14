@@ -1,4 +1,4 @@
-import ollama
+from lib import chat_with_tools
 
 
 def get_current_weather(city: str):
@@ -16,42 +16,16 @@ def get_current_weather(city: str):
     return "It's raining today"
 
 
-model = "llama3.1"
-ollama.pull(model)
+messages = chat_with_tools(
+    model="llama3.1",
+    message="What is the weather in Toronto ? What about Paris ?",
+    tools=[get_current_weather]
 
-messages = [
-    {
-        'role': 'user',
-        'content': "What is the weather in Toronto ? What about Paris ?"
-    },
-]
-
-response = ollama.chat(
-    model=model,
-    messages=messages,
-    tools=[get_current_weather],
 )
-
-if response.message.tool_calls:
-    messages.append(response.message)
-
-    for tc in response.message.tool_calls:
-        print(f"DEBUG - Executing tool call : {tc}")
-        tc_function = eval(tc.function.name)
-        args = tc.function.arguments
-
-        # This is dangerous in real environments, since we're not checking what
-        # function is executed or the parameters it is called with.
-        tc_return = tc_function(**args)
-        messages.append(
-            {'role': 'tool', 'name': tc.function.name, 'content': tc_return}
-        )
-        print(f"DEBUG - Function returned with : {tc_return}")
-
-    response = ollama.chat(
-        model=model,
-        messages=messages,
-        tools=[get_current_weather],
-    )
-
-print(response.message.content)
+print(messages[-1].content)
+print("------ History :")
+for message in messages:
+    if message.tool_calls:
+        print(f'{message.role} : {message.tool_calls}')
+    else:
+        print(f'{message.role} : {message.content}')
