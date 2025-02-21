@@ -1,2 +1,4 @@
 .env
 function_calling/ollama_data
+ollama_data
+pg_data
