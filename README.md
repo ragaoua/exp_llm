@@ -76,14 +76,14 @@ Generate the vector embeddings :
 # Search the top n most relevant tickets to a ticket
 
 ~~~bash
-./query.sh -t|--ticket <ticket_number> [-n|--limit <limit>] <-p|--print-conversation>
+./similarity_search.sh -t|--ticket <ticket_number> [-n|--limit <limit>] <-p|--print-conversation>
 ~~~
 
 
 # Search the top n most relevant tickets relative to a query
 
 ~~~bash
-./query.sh -q|--prompt <your_request> [-n|--limit <limit>] <-p|--print-conversation>
+./similarity_search.sh -q|--prompt <your_request> [-n|--limit <limit>] <-p|--print-conversation>
 ~~~
 
 
